@@ -1,8 +1,10 @@
 package kr.ac.hansung.cse.controller;
 
 import jakarta.validation.Valid;
+import kr.ac.hansung.cse.exception.DuplicateCategoryException;
 import kr.ac.hansung.cse.exception.ProductNotFoundException;
 import kr.ac.hansung.cse.model.Category;
+import kr.ac.hansung.cse.model.CategoryForm;
 import kr.ac.hansung.cse.model.Product;
 import kr.ac.hansung.cse.model.ProductForm;
 import kr.ac.hansung.cse.service.CategoryService;
@@ -31,76 +33,46 @@ public class CategoryController {
         return "categoryList";
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // GET /products/{id} - 상품 상세 조회
-    // ─────────────────────────────────────────────────────────────────
+    @GetMapping("/create")
+    public String showCreateForm(Model model){
+        model.addAttribute("categoryForm", new CategoryForm());
+        return "categoryForm";
+    }
 
-//    @GetMapping("/{id}")
-//    public String showCategory(@PathVariable Long id, Model model) {
-//        Category category = categoryService.getCategoryById(id)
-//                .orElseThrow(() -> new CategoryNotFoundException(id));
-//
-//        model.addAttribute("category", category);
-//        return "categoryView";
-//    }
-//
-//    @GetMapping("/create")
-//    public String showCreateForm(Model model) {
-//        model.addAttribute("productForm", new ProductForm());
-//        return "productForm";
-//    }
-//
-//    // ─────────────────────────────────────────────────────────────────
-//    // POST /products/create - 상품 등록 처리
-//    // ─────────────────────────────────────────────────────────────────
-//
-//    /**
-//     * @Valid: productForm에 선언된 Bean Validation 어노테이션을 실행합니다.
-//     *         (@NotBlank, @NotNull, @DecimalMin 등)
-//     *
-//     * @ModelAttribute("productForm") ProductForm productForm:
-//     *   - HTTP POST 요청 파라미터를 ProductForm 객체에 자동 바인딩합니다.
-//     *   - "productForm" 이름으로 Model에 자동 등록됩니다.
-//     *   - @Valid에 의해 검증이 수행됩니다.
-//     *
-//     * BindingResult bindingResult:
-//     *   - 검증 결과(오류 목록)를 담는 객체입니다.
-//     *   - 반드시 @ModelAttribute 파라미터 바로 다음에 위치해야 합니다.
-//     *   - BindingResult가 없으면 검증 실패 시 MethodArgumentNotValidException 발생
-//     *   - BindingResult가 있으면 오류를 직접 처리할 수 있습니다.
-//     *
-//     * [처리 흐름]
-//     * ① Spring MVC가 폼 파라미터 → ProductForm 바인딩
-//     * ② @Valid에 의해 Bean Validation 실행
-//     * ③ bindingResult.hasErrors()로 오류 확인
-//     *   - 오류 있음 → 폼 뷰로 돌아감 (오류 메시지 표시)
-//     *   - 오류 없음 → 서비스 호출 → 리다이렉트 (PRG 패턴)
-//     */
-//    @PostMapping("/create")
-//    public String createProduct(@Valid @ModelAttribute("productForm") ProductForm productForm,
-//                                BindingResult bindingResult,
-//                                RedirectAttributes redirectAttributes) {
-//
-//        // 검증 오류가 있으면 폼을 다시 표시합니다.
-//        // bindingResult는 productForm과 함께 Model에 자동으로 포함되므로
-//        // Thymeleaf에서 th:errors로 오류 메시지에 접근할 수 있습니다.
-//        if (bindingResult.hasErrors()) {
-//            return "productForm"; // 오류가 있는 채로 폼 뷰 재표시
-//        }
-//
-//        // 검증 통과: ProductForm → Product 엔티티 변환 후 저장
-//        // category 이름으로 Category 엔티티를 조회하여 연결합니다.
-//        Product product = productForm.toEntity();
-//        product.setCategory(productService.resolveCategory(productForm.getCategory()));
-//        Product savedProduct = productService.createProduct(product);
-//
-//        // Flash 속성: 리다이렉트 후 한 번만 표시되는 메시지
-//        redirectAttributes.addFlashAttribute("successMessage",
-//                "'" + savedProduct.getName() + "' 상품이 성공적으로 등록되었습니다.");
-//
-//        // PRG 패턴: POST → Redirect → GET (중복 제출 방지)
-//        return "redirect:/products";
-//    }
+    @PostMapping("/create")
+    public String createCategory(@Valid @ModelAttribute CategoryForm categoryForm,
+                                 BindingResult bindingResult,
+                                 RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "categoryForm"; // 오류가 있는 채로 폼 뷰 재표시
+        }
+
+        try{
+            categoryService.createCategory(categoryForm.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "등록 완료");
+        }
+        catch(DuplicateCategoryException e){
+            // 중복 예외
+            bindingResult.rejectValue("name", "duplicate", e.getMessage());
+            return "categoryForm";
+        }
+        return "redirect:/categories";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteCategory(@PathVariable Long id,
+                                 RedirectAttributes redirectAttributes){
+        try{
+            //categoryService.deleteCategory(id);
+            redirectAttributes.addFlashAttribute("successMessage", "삭제 완료");
+        }
+        catch(IllegalStateException e){
+            // 연결된 상품이 있을 때
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/categories";
+    }
 //
 //    // ─────────────────────────────────────────────────────────────────
 //    // GET /products/{id}/edit - 상품 수정 폼 표시
