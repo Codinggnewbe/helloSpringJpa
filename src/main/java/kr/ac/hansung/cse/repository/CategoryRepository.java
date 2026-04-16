@@ -40,7 +40,7 @@ public class CategoryRepository {
     // 삭제 전 연결 상품 수 확인(COUNT 쿼리)
     public long countProductsByCategoryId(Long categoryId){
         return em.createQuery(
-                "SELECT COUNT(P) FROM Product p WHERE p.category.id = :id",
+                "SELECT COUNT(p) FROM Product p WHERE p.category.id = :id",
                 Long.class
         ).setParameter("id", categoryId).getSingleResult();
     }

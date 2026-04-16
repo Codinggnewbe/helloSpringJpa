@@ -35,7 +35,7 @@
 <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
 
 <a class="btn" th:href="@{/categories/create}">카테고리 등록</a>
-
+<a class="back-btn" th:href="@{/products}">← 목록으로 돌아가기</a>
 
 <div class="empty-msg" th:if="${#lists.isEmpty(categories)}">
     등록된 카테고리가 없습니다. 새 카테고리를 등록해 주세요.
@@ -55,12 +55,14 @@
             <td th:text="${cat.name}"></td>
             <td>
                 <!-- th:action에서 경로 변수 (id=${cat.id}) 바인딩 방법 -->
-                <form th:action="@{/categories/{id}/delete(id=${cat.id})}" method="post">
-                    <button type="submit">삭제</button>
+                <form th:action="@{/categories/{id}/delete(id=${cat.id})}"
+                      method="post"
+                      style="display: inline;"
+                      onsubmit="return confirm('정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">
+                    <button type="submit" class="btn-delete">삭제</button>
                 </form>
             </td>
         </tr>
-
     </tbody>
 </table>
 <p th:text="${'실습 수행 일시: ' + #temporals.format(#temporals.createNow(), 'yyyy년 MM월 dd일 (E) a HH:mm:ss') + ' | 학번: 2171092 | 성명: 김민수'}"></p>

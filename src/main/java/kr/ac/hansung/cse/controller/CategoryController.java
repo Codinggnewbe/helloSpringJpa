@@ -64,7 +64,7 @@ public class CategoryController {
     public String deleteCategory(@PathVariable Long id,
                                  RedirectAttributes redirectAttributes){
         try{
-            //categoryService.deleteCategory(id);
+            categoryService.deleteCategory(id);
             redirectAttributes.addFlashAttribute("successMessage", "삭제 완료");
         }
         catch(IllegalStateException e){
