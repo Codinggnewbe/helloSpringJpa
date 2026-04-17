@@ -36,7 +36,7 @@
 
 <form th:action="@{/categories/create}" th:object="${categoryForm}" method="post">
 
-    <input type = "text" th:field = "*{name}" th:object="${categoryForm}" placeholder="카테고리 이름" />
+    <input type = "text" th:field = "*{name}" placeholder="카테고리 이름" />
     <span th:errors="*{name}" style="color:red"></span>
     <button type="submit">등록</button>
 
