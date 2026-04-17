@@ -67,11 +67,16 @@ public class ProductController {
             products = productService.getAllProducts();
         }
 
+        // 상품 자체가 없는 것과 검색 결과가 없는 메시지 구분
+        boolean isSearch = (keyword != null && !keyword.isBlank()) || categoryId != null;
+
         // 카테고리 드롭다운 목록 + 현재 검색 조건 유지
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("products", products);
         model.addAttribute("keyword", keyword);
         model.addAttribute("categoryId", categoryId);
+        model.addAttribute("isSearch", isSearch);
+
         return "productList";
     }
 
