@@ -4,16 +4,6 @@ import jakarta.servlet.Filter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-/**
- * web.xml을 대체하는 Java 설정 클래스
- *
- * Tomcat이 시작될 때 이 클래스를 자동으로 감지하여 실행합니다.
- * Spring Context는 두 계층으로 구성됩니다:
- *
- *   [Root Context]    DbConfig  → Service, Repository, DB 설정
- *        ↑ 부모
- *   [Servlet Context] WebConfig → Controller, ViewResolver 설정
- */
 public class WebAppInitializer
         extends AbstractAnnotationConfigDispatcherServletInitializer {
 

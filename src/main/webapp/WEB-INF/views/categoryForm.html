@@ -38,7 +38,7 @@
 
     <input type = "text" th:field = "*{name}" placeholder="카테고리 이름" />
     <span th:errors="*{name}" style="color:red"></span>
-    <button type="submit">등록</button>
+    <button type="submit" class="btn-submit">등록</button>
 
 </form>
 <p th:text="${'실습 수행 일시: ' + #temporals.format(#temporals.createNow(), 'yyyy년 MM월 dd일 (E) a HH:mm:ss') + ' | 학번: 2171092 | 성명: 김민수'}"></p>
