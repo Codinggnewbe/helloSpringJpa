@@ -87,13 +87,9 @@
             -->
             <select th:field="*{category}">
                 <option value="">-- 카테고리 선택 --</option>
-                <option value="전자제품">전자제품</option>
-                <option value="식품">식품</option>
-                <option value="의류">의류</option>
-                <option value="도서">도서</option>
-                <option value="스포츠">스포츠</option>
-                <option value="가구">가구</option>
-                <option value="기타">기타</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.name}"
+                        th:text="${cat.name}"</option>
             </select>
         </div>
 
